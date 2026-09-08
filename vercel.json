@@ -1,21 +1,14 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "frontend/dist"
-      }
-    }
-  ],
+  "framework": "vite",
+  "installCommand": "npm ci --prefix frontend --legacy-peer-deps",
+  "buildCommand": "cd frontend && npx vite build",
+  "outputDirectory": "frontend/dist",
   "routes": [
+    { "handle": "filesystem" },
     {
       "src": "/(.*)",
-      "dest": "frontend/dist/index.html"
+      "dest": "/index.html"
     }
-  ],
-  "env": {
-    "VITE_API_BASE_URL": "@vite_api_base_url"
-  }
+  ]
 }

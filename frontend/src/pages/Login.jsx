@@ -22,6 +22,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { authService } from "../services/auth.service";
+import { resolveMediaUrl } from "../services/api";
 import { getScopedSetting, setScopedSetting, labels } from "../utils/userSettings";
 
 const DEFAULT_MEDIA = {
@@ -97,7 +98,12 @@ export default function Login() {
       }
       navigate("/");
     } catch (err) {
-      setError(err.response?.data?.detail || "Đăng nhập thất bại");
+      const detail = err.response?.data?.detail;
+      setError(typeof detail === 'string' ? detail : err.response
+        ? 'Đăng nhập thất bại. Vui lòng kiểm tra thông tin hoặc thử lại sau.'
+        : err.request
+          ? 'Không kết nối được máy chủ. Vui lòng thử lại sau.'
+          : err.message || 'Đăng nhập thất bại');
     } finally {
       setLoading(false);
     }
@@ -272,7 +278,12 @@ export default function Login() {
 
                     {/* Ảnh chính */}
                     <img
-                      src={homepageMedia.hospital_image_url || DEFAULT_MEDIA.hospital_image_url}
+                      src={resolveMediaUrl(homepageMedia.hospital_image_url) || DEFAULT_MEDIA.hospital_image_url}
+                      onError={(event) => {
+                        if (event.currentTarget.getAttribute('src') !== DEFAULT_MEDIA.hospital_image_url) {
+                          event.currentTarget.src = DEFAULT_MEDIA.hospital_image_url;
+                        }
+                      }}
                       alt="Đội ngũ tiếp nhận hiến máu"
                       className="h-[430px] w-full object-cover lg:h-[380px]"
                       style={{ borderRadius: '1.5rem', display: 'block' }}
@@ -402,7 +413,12 @@ export default function Login() {
               <div style={{ borderRadius: 'calc(2rem - 3px)', background: '#fff', padding: '10px' }}>
                 <div className="relative w-full overflow-hidden" style={{ borderRadius: '1.5rem' }}>
                   <img
-                    src={homepageMedia.donor_activity_image_url || DEFAULT_MEDIA.donor_activity_image_url}
+                    src={resolveMediaUrl(homepageMedia.donor_activity_image_url) || DEFAULT_MEDIA.donor_activity_image_url}
+                    onError={(event) => {
+                      if (event.currentTarget.getAttribute('src') !== DEFAULT_MEDIA.donor_activity_image_url) {
+                        event.currentTarget.src = DEFAULT_MEDIA.donor_activity_image_url;
+                      }
+                    }}
                     alt="Hoạt động hiến máu"
                     className="h-[360px] w-full object-cover"
                     style={{ borderRadius: '1.5rem', display: 'block' }}
