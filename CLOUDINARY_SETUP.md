@@ -12,18 +12,17 @@
 2. Copy **API Environment variable** (dòng bắt đầu bằng `cloudinary://`)
 3. Ví dụ: `cloudinary://123456789:abc-def-ghi@cloud-name`
 
-## Bước 3: Cấu hình Vercel
+## Bước 3: Cấu hình Render (backend)
 
-1. Vào Vercel dashboard → Project → Settings → Environment Variables
+1. Vào Render dashboard → chọn service backend → **Environment**
 2. Thêm biến mới:
    - **Name:** `CLOUDINARY_URL`
    - **Value:** Paste giá trị từ Bước 2
-   - **Environments:** Production, Preview, Development (chọn tất cả)
-3. Click "Save"
+3. Click **Save Changes**
 
 ## Bước 4: Deploy
 
-1. Trigger redeploy trên Vercel (hoặc push code mới)
+1. Trigger **Manual Deploy → Deploy latest commit** trên Render
 2. Xong! Ảnh sẽ được upload lên Cloudinary thay vì local folder
 
 ## Hỗ trợ trong quá trình phát triển
