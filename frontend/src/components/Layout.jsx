@@ -267,6 +267,7 @@ export default function Layout({ children }) {
   const tr = useI18n(user);
   const [, forceSettingsRefresh] = useState(0);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
     const refresh = () => forceSettingsRefresh((v) => v + 1);
@@ -277,6 +278,19 @@ export default function Layout({ children }) {
       window.removeEventListener("storage", refresh);
     };
   }, []);
+
+  useEffect(() => {
+    setMobileNavOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!mobileNavOpen) return undefined;
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") setMobileNavOpen(false);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [mobileNavOpen]);
 
   const handleLogout = () => {
     authService.logout();
@@ -382,7 +396,19 @@ export default function Layout({ children }) {
 
   return (
     <div className="h-screen overflow-hidden bg-[#f8fafc] font-sans text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-      <aside className="fixed inset-y-0 left-0 z-50 hidden h-screen w-[280px] shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950 md:flex">
+      {mobileNavOpen && (
+        <button
+          type="button"
+          aria-label="Đóng menu"
+          onClick={() => setMobileNavOpen(false)}
+          className="fixed inset-0 z-40 bg-slate-950/40 md:hidden"
+        />
+      )}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-[280px] shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-white transition-transform duration-200 dark:border-slate-800 dark:bg-slate-950 md:translate-x-0 ${
+          mobileNavOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         <div className="shrink-0 px-6 py-6">
           <div className="flex items-center gap-4">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-red-500 to-red-700 shadow-lg shadow-red-100 dark:shadow-red-950/40">
@@ -410,6 +436,7 @@ export default function Layout({ children }) {
                 <Link
                   key={`${item.labelKey}-${item.path}`}
                   to={item.path}
+                  onClick={() => setMobileNavOpen(false)}
                   className={`group flex items-center gap-3 rounded-2xl px-4 py-3 text-[15px] font-bold transition-all ${
                     active
                       ? "bg-red-50 text-red-600 shadow-sm shadow-red-100 dark:bg-red-950/40 dark:text-red-300 dark:shadow-none"
@@ -441,7 +468,13 @@ export default function Layout({ children }) {
       <section className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden md:ml-[280px]">
         <header className="sticky top-0 z-40 flex h-[76px] items-center justify-between border-b border-slate-200 bg-white/90 px-6 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90 lg:px-8">
           <div className="flex items-center gap-4">
-            <button className="rounded-xl border border-slate-200 p-2 text-slate-600 dark:border-slate-700 dark:text-slate-300 md:hidden">
+            <button
+              type="button"
+              aria-label="Mở menu"
+              aria-expanded={mobileNavOpen}
+              onClick={() => setMobileNavOpen(true)}
+              className="rounded-xl border border-slate-200 p-2 text-slate-600 dark:border-slate-700 dark:text-slate-300 md:hidden"
+            >
               ☰
             </button>
             <div className="min-w-0">
